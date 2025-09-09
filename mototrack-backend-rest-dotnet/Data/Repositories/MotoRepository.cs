@@ -34,7 +34,7 @@ public class MotoRepository : IMotoRepository
         };
     }
 
-    public async Task<MotoEntity?> ObterMotoPorId(int id)
+    public async Task<MotoEntity?> ObterMotoPorIdAsync(int id)
     {
         var result = await _context
             .Moto
@@ -84,5 +84,15 @@ public class MotoRepository : IMotoRepository
         }
 
         return null;
+    }
+
+    public async Task<bool> ExistePorPlacaAsync(string placa)
+    {
+        return await _context.Moto.AnyAsync(m => m.Placa == placa);
+    }
+
+    public async Task<bool> ExistePorChassiAsync(string chassi)
+    {
+        return await _context.Moto.AnyAsync(m => m.Chassi == chassi);
     }
 }
