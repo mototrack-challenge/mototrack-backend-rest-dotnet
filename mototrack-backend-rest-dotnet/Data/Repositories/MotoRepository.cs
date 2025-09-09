@@ -45,54 +45,49 @@ public class MotoRepository : IMotoRepository
 
     public async Task<MotoEntity?> AdicionarMotoAsync(MotoEntity moto)
     {
-        _context.Moto.AddAsync(moto);
-        _context.SaveChanges();
+        _context.Moto.Add(moto);
+        await _context.SaveChangesAsync();
 
         return moto;
     }
 
     public async Task<MotoEntity?> EditarMotoAsync(int id, MotoEntity novaMoto)
     {
-        var result = await _context.Moto.FirstOrDefaultAsync(m => m.Id == id);
+        var motoExistente = await _context.Moto.FirstOrDefaultAsync(m => m.Id == id);
 
-        if (result is not null)
-        {
-            result.Placa = novaMoto.Placa;
-            result.Chassi = novaMoto.Chassi;
-            result.Modelo = novaMoto.Modelo;
-            result.Status = novaMoto.Status;
+        if (motoExistente is null)
+            return null;
 
-            _context.Update(result);
-            _context.SaveChanges();
+        motoExistente.Placa = novaMoto.Placa;
+        motoExistente.Chassi = novaMoto.Chassi;
+        motoExistente.Modelo = novaMoto.Modelo;
+        motoExistente.Status = novaMoto.Status;
 
-            return result;
-        }
-
-        return null;
+        await _context.SaveChangesAsync();
+        return motoExistente;
     }
 
     public async Task<MotoEntity?> DeletarMotoAsync(int id)
     {
-        var result = await _context.Moto.FindAsync(id);
+        var moto = await _context.Moto.FindAsync(id);
 
-        if (result is not null)
-        {
-            _context.Remove(result);
-            _context.SaveChanges();
+        if (moto is null)
+            return null;
 
-            return result;
-        }
-
-        return null;
+        _context.Moto.Remove(moto);
+        await _context.SaveChangesAsync();
+        return moto;
     }
 
-    public async Task<bool> ExistePorPlacaAsync(string placa)
+    public async Task<bool> ExistePorPlacaAsync(string placa, int? idIgnorado = null)
     {
-        return await _context.Moto.AnyAsync(m => m.Placa == placa);
+        return await _context.Moto
+            .AnyAsync(m => m.Placa == placa && (!idIgnorado.HasValue || m.Id != idIgnorado.Value));
     }
 
-    public async Task<bool> ExistePorChassiAsync(string chassi)
+    public async Task<bool> ExistePorChassiAsync(string chassi, int? idIgnorado = null)
     {
-        return await _context.Moto.AnyAsync(m => m.Chassi == chassi);
+        return await _context.Moto
+            .AnyAsync(m => m.Chassi == chassi && (!idIgnorado.HasValue || m.Id != idIgnorado.Value));
     }
 }

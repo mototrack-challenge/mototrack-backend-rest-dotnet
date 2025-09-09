@@ -9,6 +9,7 @@ namespace mototrack_backend_rest_dotnet.Models;
 public class MotoEntity
 {
     [Key]
+    [Column("id_moto")]
     public long Id { get; set; }
 
     [Required(ErrorMessage = "O campo Placa é obrigatorio!")]
@@ -20,8 +21,10 @@ public class MotoEntity
     public string Chassi { get; set; }
 
     [Required(ErrorMessage = "O campo Modelo é obrigatorio!")]
+    [Column(TypeName = "varchar(11)")]
     public ModeloMoto Modelo { get; set; }
 
     [Required(ErrorMessage = "O campo Status é obrigatorio!")]
+    [Column(TypeName = "varchar(30)")]
     public StatusMoto Status { get; set; }
 }
