@@ -10,6 +10,10 @@ public class ApplicationContext : DbContext
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<MotoEntity>()
+            .Property(m => m.Id)
+            .HasDefaultValueSql("MOTO_SEQ.NEXTVAL");
+
+        modelBuilder.Entity<MotoEntity>()
             .HasIndex(m => m.Placa)
             .IsUnique();
 

@@ -46,15 +46,15 @@ public class MotoController : ControllerBase
                 m.Status,
                 links = new
                 {
-                    self = Url.Action(nameof(GetId), "Motos", new { id = m.Id }, Request.Scheme),
-                    put = Url.Action(nameof(Put), "Motos", new { id = m.Id }, Request.Scheme),
-                    delete = Url.Action(nameof(Delete), "Motos", new { id = m.Id }, Request.Scheme)
+                    self = Url.Action(nameof(GetId), "Moto", new { id = m.Id }, Request.Scheme),
+                    put = Url.Action(nameof(Put), "Moto", new { id = m.Id }, Request.Scheme),
+                    delete = Url.Action(nameof(Delete), "Moto", new { id = m.Id }, Request.Scheme)
                 }
             }),
             links = new
             {
-                self = Url.Action(nameof(GetId), "Motos", null),
-                post = Url.Action(nameof(Post), "Motos", null, Request.Scheme),
+                self = Url.Action(nameof(GetId), "Moto", null),
+                post = Url.Action(nameof(Post), "Moto", null, Request.Scheme),
             },
             pagina = new
             {
