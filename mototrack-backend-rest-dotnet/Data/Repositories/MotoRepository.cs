@@ -20,6 +20,7 @@ public class MotoRepository : IMotoRepository
 
         var result = await _context
             .Moto
+            .Include(m => m.Servicos)
             .OrderBy(m => m.Id)
             .Skip(deslocamento)
             .Take(registrosRetornados)
@@ -38,6 +39,7 @@ public class MotoRepository : IMotoRepository
     {
         var result = await _context
             .Moto
+            .Include(m => m.Servicos)
             .FirstOrDefaultAsync(m => m.Id == id);
 
         return result;

@@ -47,6 +47,7 @@ public class ColaboradorController : ControllerBase
                 c.Nome,
                 c.Matricula,
                 c.Email,
+                c.Servicos,
                 links = new
                 {
                     self = Url.Action(nameof(GetId), "Colaborador", new { id = c.Id }, Request.Scheme),

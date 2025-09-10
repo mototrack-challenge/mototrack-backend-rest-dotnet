@@ -1,6 +1,7 @@
 ﻿using mototrack_backend_rest_dotnet.Models.Enums;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 
 namespace mototrack_backend_rest_dotnet.Models;
 
@@ -28,6 +29,7 @@ public class ServicoEntity
     public long MotoId { get; set; }
 
     [ForeignKey("MotoId")]
+    [JsonIgnore]
     public MotoEntity Moto { get; set; }
 
     [Required]
@@ -35,5 +37,6 @@ public class ServicoEntity
     public long ColaboradorId { get; set; }
 
     [ForeignKey("ColaboradorId")]
+    [JsonIgnore]
     public ColaboradorEntity Colaborador { get; set; }
 }

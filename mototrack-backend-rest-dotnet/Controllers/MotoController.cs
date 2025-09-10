@@ -44,6 +44,7 @@ public class MotoController : ControllerBase
                 m.Chassi,
                 m.Modelo,
                 m.Status,
+                m.Servicos,
                 links = new
                 {
                     self = Url.Action(nameof(GetId), "Moto", new { id = m.Id }, Request.Scheme),

@@ -20,6 +20,7 @@ public class ColaboradorRepository : IColaboradorRepository
 
         var result = await _context
             .Colaborador
+            .Include(c => c.Servicos)
             .OrderBy(c => c.Id)
             .Skip(deslocamento)
             .Take(registrosRetornados)
@@ -38,6 +39,7 @@ public class ColaboradorRepository : IColaboradorRepository
     {
         var result = await _context
             .Colaborador
+            .Include(c => c.Servicos)
             .FirstOrDefaultAsync(c => c.Id == id);
 
         return result;
