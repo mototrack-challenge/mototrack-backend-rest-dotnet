@@ -15,7 +15,7 @@ public class ColaboradorEntity
     public string Nome { get; set; }
 
     [Required]
-    [Column("MATRICULA", TypeName = "varchar2(20)")]
+    [Column("MATRICULA", TypeName = "varchar2(9)")]
     public string Matricula { get; set; }
 
     [Column("EMAIL", TypeName = "varchar2(100)")]

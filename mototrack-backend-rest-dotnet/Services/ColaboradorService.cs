@@ -21,7 +21,7 @@ public class ColaboradorService : IColaboradorService
         return colaboradores;
     }
 
-    public async Task<ColaboradorEntity?> ObterColaboradorPorIdAsync(int id)
+    public async Task<ColaboradorEntity?> ObterColaboradorPorIdAsync(long id)
     {
         return await _colaboradorRepository.ObterColaboradorPorIdAsync(id);
     }
@@ -31,7 +31,7 @@ public class ColaboradorService : IColaboradorService
         return await _colaboradorRepository.AdicionarColaboradorAsync(colaboradorDTO.ToColaboradorEntity());
     }
 
-    public async Task<ColaboradorEntity?> EditarColaboradorAsync(int id, ColaboradorDTO novoColaboradorDTO)
+    public async Task<ColaboradorEntity?> EditarColaboradorAsync(long id, ColaboradorDTO novoColaboradorDTO)
     {
         var colaboradorExistente = await _colaboradorRepository.ObterColaboradorPorIdAsync(id);
 
@@ -41,7 +41,7 @@ public class ColaboradorService : IColaboradorService
         return await _colaboradorRepository.EditarColaboradorAsync(id, novoColaboradorDTO.ToColaboradorEntity());
     }
 
-    public async Task<ColaboradorEntity?> DeletarColaboradorAsync(int id)
+    public async Task<ColaboradorEntity?> DeletarColaboradorAsync(long id)
     {
         var colaborador = await _colaboradorRepository.ObterColaboradorPorIdAsync(id);
 

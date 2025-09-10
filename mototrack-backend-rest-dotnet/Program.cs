@@ -19,6 +19,9 @@ builder.Services.AddDbContext<ApplicationContext>(options => {
 builder.Services.AddTransient<IMotoRepository, MotoRepository>();
 builder.Services.AddTransient<IMotoService, MotoService>();
 
+builder.Services.AddTransient<IColaboradorRepository, ColaboradorRepository>();
+builder.Services.AddTransient<IColaboradorService, ColaboradorService>();
+
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();

@@ -24,6 +24,12 @@ public class ApplicationContext : DbContext
             entity.Property(e => e.Modelo).HasConversion<string>();
             entity.Property(e => e.Status).HasConversion<string>();
         });
+
+        modelBuilder.Entity<ColaboradorEntity>(entity =>
+        {
+            entity.HasIndex(e => e.Matricula).IsUnique();
+            entity.HasIndex(e => e.Email).IsUnique();
+        });
     }
 
     public DbSet<MotoEntity> Moto { get; set; }
