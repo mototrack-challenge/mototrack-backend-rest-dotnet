@@ -20,4 +20,6 @@ public class ColaboradorEntity
 
     [Column("EMAIL", TypeName = "varchar2(100)")]
     public string Email { get; set; }
+
+    public ICollection<ServicoEntity> Servicos { get; set; } = new List<ServicoEntity>();
 }

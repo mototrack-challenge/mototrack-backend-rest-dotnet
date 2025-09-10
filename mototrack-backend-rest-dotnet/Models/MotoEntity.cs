@@ -29,4 +29,6 @@ public class MotoEntity
     [Required(ErrorMessage = "O campo Status é obrigatorio!")]
     [Column("STATUS", TypeName = "varchar2(30)")]
     public StatusMoto Status { get; set; }
+
+    public ICollection<ServicoEntity> Servicos { get; set; } = new List<ServicoEntity>();
 }
