@@ -9,17 +9,21 @@ public class ApplicationContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.Entity<MotoEntity>()
-            .Property(m => m.Id)
-            .HasDefaultValueSql("MOTO_SEQ.NEXTVAL");
+        modelBuilder.Entity<MotoEntity>(entity =>
+        {
+            entity.HasKey(e => e.Id);
 
-        modelBuilder.Entity<MotoEntity>()
-            .HasIndex(m => m.Placa)
-            .IsUnique();
+            entity.Property(m => m.Id)
+                .HasColumnName("ID_MOTO")
+                .ValueGeneratedOnAdd()
+                .HasDefaultValueSql("MOTO_SEQ.NEXTVAL");
 
-        modelBuilder.Entity<MotoEntity>()
-            .HasIndex(m => m.Chassi)
-            .IsUnique();
+            entity.HasIndex(e => e.Placa).IsUnique();
+            entity.HasIndex(e => e.Chassi).IsUnique();
+
+            entity.Property(e => e.Modelo).HasConversion<string>();
+            entity.Property(e => e.Status).HasConversion<string>();
+        });
     }
 
     public DbSet<MotoEntity> Moto { get; set; }

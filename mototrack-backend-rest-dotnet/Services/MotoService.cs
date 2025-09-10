@@ -28,11 +28,11 @@ public class MotoService : IMotoService
 
     public async Task<MotoEntity?> AdicionarMotoAsync(MotoDTO dto)
     {
-        if (await _motoRepository.ExistePorPlacaAsync(dto.Placa))
-            throw new InvalidOperationException("Já existe uma moto cadastrada com essa placa.");
+        //if (await _motoRepository.ExistePorPlacaAsync(dto.Placa))
+        //    throw new InvalidOperationException("Já existe uma moto cadastrada com essa placa.");
 
-        if (await _motoRepository.ExistePorChassiAsync(dto.Chassi))
-            throw new InvalidOperationException("Já existe uma moto cadastrada com esse chassi.");
+        //if (await _motoRepository.ExistePorChassiAsync(dto.Chassi))
+        //    throw new InvalidOperationException("Já existe uma moto cadastrada com esse chassi.");
 
 
         return await _motoRepository.AdicionarMotoAsync(dto.ToMotoEntity());
@@ -45,11 +45,11 @@ public class MotoService : IMotoService
         if (motoExistente is null)
             return null;
 
-        if (await _motoRepository.ExistePorPlacaAsync(dto.Placa, id))
-            throw new InvalidOperationException("Já existe uma moto cadastrada com essa placa.");
+        //if (await _motoRepository.ExistePorPlacaAsync(dto.Placa, id))
+        //    throw new InvalidOperationException("Já existe uma moto cadastrada com essa placa.");
 
-        if (await _motoRepository.ExistePorChassiAsync(dto.Chassi, id))
-            throw new InvalidOperationException("Já existe uma moto cadastrada com esse chassi.");
+        //if (await _motoRepository.ExistePorChassiAsync(dto.Chassi, id))
+        //    throw new InvalidOperationException("Já existe uma moto cadastrada com esse chassi.");
 
         return await _motoRepository.EditarMotoAsync(id, dto.ToMotoEntity());
     }

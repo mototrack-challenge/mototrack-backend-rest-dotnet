@@ -3,6 +3,6 @@
 public enum StatusMoto
 {
     MANUTENCAO,
-    DISPONIVEL,
+    PRONTA_PARA_USO,
     AVALIACAO
 }

@@ -8,6 +8,12 @@ public class MotoRequestSample : IExamplesProvider<MotoDTO>
 {
     public MotoDTO GetExamples()
     {
-        return new MotoDTO("ABC1234", "9C2JC4110VR123456", ModeloMoto.MOTTU_POP, StatusMoto.DISPONIVEL);
+        return new MotoDTO
+        {
+            Placa = "ABC1234",
+            Chassi = "9C2JC4110VR123456",
+            Modelo = ModeloMoto.MOTTU_POP,
+            Status = StatusMoto.PRONTA_PARA_USO
+        };
     }
 }

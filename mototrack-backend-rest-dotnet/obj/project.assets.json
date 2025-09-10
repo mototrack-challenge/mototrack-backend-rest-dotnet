@@ -3156,11 +3156,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "D:\\Documentos\\Faculdade\\2ano\\4semestre\\Challenge\\Sprint3\\mototrack-backend-rest-dotnet\\mototrack-backend-rest-dotnet\\mototrack-backend-rest-dotnet.csproj",
+      "projectUniqueName": "D:\\Documentos\\Faculdade\\2ano\\3semestre\\GlobalSolution\\mototrack-backend-rest-dotnet\\mototrack-backend-rest-dotnet\\mototrack-backend-rest-dotnet.csproj",
       "projectName": "mototrack-backend-rest-dotnet",
-      "projectPath": "D:\\Documentos\\Faculdade\\2ano\\4semestre\\Challenge\\Sprint3\\mototrack-backend-rest-dotnet\\mototrack-backend-rest-dotnet\\mototrack-backend-rest-dotnet.csproj",
+      "projectPath": "D:\\Documentos\\Faculdade\\2ano\\3semestre\\GlobalSolution\\mototrack-backend-rest-dotnet\\mototrack-backend-rest-dotnet\\mototrack-backend-rest-dotnet.csproj",
       "packagesPath": "C:\\Users\\felip\\.nuget\\packages\\",
-      "outputPath": "D:\\Documentos\\Faculdade\\2ano\\4semestre\\Challenge\\Sprint3\\mototrack-backend-rest-dotnet\\mototrack-backend-rest-dotnet\\obj\\",
+      "outputPath": "D:\\Documentos\\Faculdade\\2ano\\3semestre\\GlobalSolution\\mototrack-backend-rest-dotnet\\mototrack-backend-rest-dotnet\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"

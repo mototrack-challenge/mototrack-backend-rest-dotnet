@@ -14,7 +14,7 @@ public class MotoResponseSample : IExamplesProvider<MotoEntity>
             Placa = "ABC1234",
             Chassi = "9C2JC4110VR123456",
             Modelo = ModeloMoto.MOTTU_POP,
-            Status = StatusMoto.DISPONIVEL
+            Status = StatusMoto.PRONTA_PARA_USO
         };
     }
 }

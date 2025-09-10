@@ -79,15 +79,15 @@ public class MotoRepository : IMotoRepository
         return moto;
     }
 
-    public async Task<bool> ExistePorPlacaAsync(string placa, int? idIgnorado = null)
-    {
-        return await _context.Moto
-            .AnyAsync(m => m.Placa == placa && (!idIgnorado.HasValue || m.Id != idIgnorado.Value));
-    }
+    //public async Task<bool> ExistePorPlacaAsync(string placa, int? idIgnorado = null)
+    //{
+    //    return await _context.Moto
+    //        .AnyAsync(m => m.Placa == placa && (!idIgnorado.HasValue || m.Id != idIgnorado.Value));
+    //}
 
-    public async Task<bool> ExistePorChassiAsync(string chassi, int? idIgnorado = null)
-    {
-        return await _context.Moto
-            .AnyAsync(m => m.Chassi == chassi && (!idIgnorado.HasValue || m.Id != idIgnorado.Value));
-    }
+    //public async Task<bool> ExistePorChassiAsync(string chassi, int? idIgnorado = null)
+    //{
+    //    return await _context.Moto
+    //        .AnyAsync(m => m.Chassi == chassi && (!idIgnorado.HasValue || m.Id != idIgnorado.Value));
+    //}
 }
