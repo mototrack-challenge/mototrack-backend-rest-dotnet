@@ -5,7 +5,7 @@ namespace mototrack_backend_rest_dotnet.Mappers;
 
 public static class ColaboradorMapper
 {
-    public static ColaboradorEntity ToMotoEntity(this ColaboradorDTO dto)
+    public static ColaboradorEntity ToColaboradorEntity(this ColaboradorDTO dto)
     {
         return new ColaboradorEntity
         {
