@@ -76,7 +76,7 @@ public class MotoController : ControllerBase
     [SwaggerResponse(statusCode: 200, description: "Moto encontrada", type: typeof(MotoEntity))]
     [SwaggerResponse(statusCode: 404, description: "Moto não encontrada")]
     [SwaggerResponseExample(statusCode: 200, typeof(MotoResponseSample))]
-    public async Task<IActionResult> GetId(int id)
+    public async Task<IActionResult> GetId(long id)
     {
         var moto = await _motoService.ObterMotoPorIdAsync(id);
 

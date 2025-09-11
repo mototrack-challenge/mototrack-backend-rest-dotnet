@@ -35,7 +35,7 @@ public class MotoRepository : IMotoRepository
         };
     }
 
-    public async Task<MotoEntity?> ObterMotoPorIdAsync(int id)
+    public async Task<MotoEntity?> ObterMotoPorIdAsync(long id)
     {
         var result = await _context
             .Moto

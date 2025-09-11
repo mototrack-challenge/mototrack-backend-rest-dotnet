@@ -21,7 +21,7 @@ public class MotoService : IMotoService
         return motos;
     }
 
-    public async Task<MotoEntity?> ObterMotoPorIdAsync(int id)
+    public async Task<MotoEntity?> ObterMotoPorIdAsync(long id)
     {
         return await _motoRepository.ObterMotoPorIdAsync(id);
     }

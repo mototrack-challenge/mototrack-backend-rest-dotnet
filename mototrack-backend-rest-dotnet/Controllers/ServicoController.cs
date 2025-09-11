@@ -90,6 +90,23 @@ public class ServicoController : ControllerBase
         return Ok(servico);
     }
 
+    [HttpGet("moto/{motoId}")]
+    [SwaggerOperation(
+    Summary = "Lista serviços de uma moto",
+    Description = "Retorna todos os serviços vinculados a uma moto específica pelo ID."
+)]
+    [SwaggerResponse(statusCode: 200, description: "Lista retornada com sucesso", type: typeof(IEnumerable<ServicoEntity>))]
+    [SwaggerResponse(statusCode: 404, description: "Moto não encontrada ou sem serviços")]
+    public async Task<IActionResult> GetByMotoId(long motoId)
+    {
+        var servicos = await _servicoService.ObterServicosPorMotoIdAsync(motoId);
+
+        if (servicos == null || !servicos.Any())
+            return NotFound(new { message = "Nenhum serviço encontrado para essa moto." });
+
+        return Ok(servicos);
+    }
+
     [HttpPost]
     [SwaggerOperation(
         Summary = "Cadastra um novo serviço",

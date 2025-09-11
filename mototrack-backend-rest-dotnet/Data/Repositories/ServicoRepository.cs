@@ -44,6 +44,16 @@ public class ServicoRepository : IServicoRepository
             .FirstOrDefaultAsync(s => s.Id == id);
     }
 
+    public async Task<IEnumerable<ServicoEntity>> ObterServicosPorMotoIdAsync(long motoId)
+    {
+        return await _context.Servico
+            .Where(s => s.MotoId == motoId)
+            .Include(s => s.Moto)
+            .Include(s => s.Colaborador)
+            .OrderBy(s => s.DataCadastro)
+            .ToListAsync();
+    }
+
     public async Task<ServicoEntity?> AdicionarServicoAsync(ServicoEntity servico)
     {
         _context.Servico.Add(servico);

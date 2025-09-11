@@ -9,10 +9,12 @@ namespace mototrack_backend_rest_dotnet.Services;
 public class ServicoService : IServicoService
 {
     private readonly IServicoRepository _servicoRepository;
+    private readonly IMotoRepository _motoRepository;
 
-    public ServicoService(IServicoRepository servicoRepository)
+    public ServicoService(IServicoRepository servicoRepository, IMotoRepository motoRepository)
     {
         _servicoRepository = servicoRepository;
+        _motoRepository = motoRepository;
     }
 
     public async Task<PageResultModel<IEnumerable<ServicoEntity>>> ObterTodosServicosAsync(int deslocamento = 0, int registrosRetornados = 10)
@@ -24,6 +26,16 @@ public class ServicoService : IServicoService
     public async Task<ServicoEntity?> ObterServicoPorIdAsync(long id)
     {
         return await _servicoRepository.ObterServicoPorIdAsync(id);
+    }
+
+    public async Task<IEnumerable<ServicoEntity>> ObterServicosPorMotoIdAsync(long motoId)
+    {
+        var moto = await _motoRepository.ObterMotoPorIdAsync(motoId);
+
+        if (moto is null)
+            return null;
+
+        return await _servicoRepository.ObterServicosPorMotoIdAsync(motoId);
     }
 
     public async Task<ServicoEntity?> AdicionarServicoAsync(ServicoDTO servicoDTO)
