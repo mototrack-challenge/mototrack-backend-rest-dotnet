@@ -1,9 +1,12 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.EntityFrameworkCore;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace mototrack_backend_rest_dotnet.Models;
 
 [Table("MT_COLABORADORES")]
+[Index(nameof(Matricula), IsUnique = true)]
+[Index(nameof(Email), IsUnique = true)]
 public class ColaboradorEntity
 {
     [Key]

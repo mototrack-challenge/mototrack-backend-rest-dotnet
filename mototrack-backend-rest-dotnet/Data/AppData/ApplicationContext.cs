@@ -25,12 +25,6 @@ public class ApplicationContext : DbContext
             entity.Property(e => e.Status).HasConversion<string>();
         });
 
-        modelBuilder.Entity<ColaboradorEntity>(entity =>
-        {
-            entity.HasIndex(e => e.Matricula).IsUnique();
-            entity.HasIndex(e => e.Email).IsUnique();
-        });
-
         modelBuilder.Entity<ServicoEntity>(entity =>
         {
             entity.Property(s => s.Status).HasConversion<string>();
