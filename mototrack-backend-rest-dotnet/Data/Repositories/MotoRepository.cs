@@ -21,6 +21,7 @@ public class MotoRepository : IMotoRepository
         var result = await _context
             .Moto
             .Include(m => m.Servicos)
+                .ThenInclude(s => s.Colaborador)
             .OrderBy(m => m.Id)
             .Skip(deslocamento)
             .Take(registrosRetornados)
@@ -40,56 +41,9 @@ public class MotoRepository : IMotoRepository
         var result = await _context
             .Moto
             .Include(m => m.Servicos)
+                .ThenInclude(s => s.Colaborador)
             .FirstOrDefaultAsync(m => m.Id == id);
 
         return result;
     }
-
-    public async Task<MotoEntity?> AdicionarMotoAsync(MotoEntity moto)
-    {
-        _context.Moto.Add(moto);
-        await _context.SaveChangesAsync();
-
-        return moto;
-    }
-
-    public async Task<MotoEntity?> EditarMotoAsync(int id, MotoEntity novaMoto)
-    {
-        var motoExistente = await _context.Moto.FirstOrDefaultAsync(m => m.Id == id);
-
-        if (motoExistente is null)
-            return null;
-
-        motoExistente.Placa = novaMoto.Placa;
-        motoExistente.Chassi = novaMoto.Chassi;
-        motoExistente.Modelo = novaMoto.Modelo;
-        motoExistente.Status = novaMoto.Status;
-
-        await _context.SaveChangesAsync();
-        return motoExistente;
-    }
-
-    public async Task<MotoEntity?> DeletarMotoAsync(int id)
-    {
-        var moto = await _context.Moto.FindAsync(id);
-
-        if (moto is null)
-            return null;
-
-        _context.Moto.Remove(moto);
-        await _context.SaveChangesAsync();
-        return moto;
-    }
-
-    //public async Task<bool> ExistePorPlacaAsync(string placa, int? idIgnorado = null)
-    //{
-    //    return await _context.Moto
-    //        .AnyAsync(m => m.Placa == placa && (!idIgnorado.HasValue || m.Id != idIgnorado.Value));
-    //}
-
-    //public async Task<bool> ExistePorChassiAsync(string chassi, int? idIgnorado = null)
-    //{
-    //    return await _context.Moto
-    //        .AnyAsync(m => m.Chassi == chassi && (!idIgnorado.HasValue || m.Id != idIgnorado.Value));
-    //}
 }

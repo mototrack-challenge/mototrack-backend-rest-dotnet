@@ -26,42 +26,4 @@ public class MotoService : IMotoService
         return await _motoRepository.ObterMotoPorIdAsync(id);
     }
 
-    public async Task<MotoEntity?> AdicionarMotoAsync(MotoDTO dto)
-    {
-        //if (await _motoRepository.ExistePorPlacaAsync(dto.Placa))
-        //    throw new InvalidOperationException("Já existe uma moto cadastrada com essa placa.");
-
-        //if (await _motoRepository.ExistePorChassiAsync(dto.Chassi))
-        //    throw new InvalidOperationException("Já existe uma moto cadastrada com esse chassi.");
-
-
-        return await _motoRepository.AdicionarMotoAsync(dto.ToMotoEntity());
-    }
-
-    public async Task<MotoEntity?> EditarMotoAsync(int id, MotoDTO dto)
-    {
-        var motoExistente = await _motoRepository.ObterMotoPorIdAsync(id);
-
-        if (motoExistente is null)
-            return null;
-
-        //if (await _motoRepository.ExistePorPlacaAsync(dto.Placa, id))
-        //    throw new InvalidOperationException("Já existe uma moto cadastrada com essa placa.");
-
-        //if (await _motoRepository.ExistePorChassiAsync(dto.Chassi, id))
-        //    throw new InvalidOperationException("Já existe uma moto cadastrada com esse chassi.");
-
-        return await _motoRepository.EditarMotoAsync(id, dto.ToMotoEntity());
-    }
-
-    public async Task<MotoEntity?> DeletarMotoAsync(int id)
-    {
-        var moto = await _motoRepository.ObterMotoPorIdAsync(id);
-
-        if (moto == null)
-            return null;
-
-        return await _motoRepository.DeletarMotoAsync(id);
-    }
-
 }

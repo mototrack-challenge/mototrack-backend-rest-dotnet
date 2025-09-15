@@ -44,18 +44,29 @@ public class MotoController : ControllerBase
                 m.Chassi,
                 m.Modelo,
                 m.Status,
-                m.Servicos,
+                Servicos = m.Servicos.Select(s => new ServicoResponseDTO
+                {
+                    Id = s.Id,
+                    Descricao = s.Descricao,
+                    DataCadastro = s.DataCadastro,
+                    Status = s.Status,
+                    MotoId = s.MotoId,
+                    Colaborador = s.Colaborador == null ? null : new ColaboradorResponseDTO
+                    {
+                        Id = s.Colaborador.Id,
+                        Nome = s.Colaborador.Nome,
+                        Matricula = s.Colaborador.Matricula,
+                        Email = s.Colaborador.Email
+                    }
+                }),
                 links = new
                 {
                     self = Url.Action(nameof(GetId), "Moto", new { id = m.Id }, Request.Scheme),
-                    put = Url.Action(nameof(Put), "Moto", new { id = m.Id }, Request.Scheme),
-                    delete = Url.Action(nameof(Delete), "Moto", new { id = m.Id }, Request.Scheme)
                 }
             }),
             links = new
             {
                 self = Url.Action(nameof(GetId), "Moto", null),
-                post = Url.Action(nameof(Post), "Moto", null, Request.Scheme),
             },
             pagina = new
             {
@@ -83,70 +94,30 @@ public class MotoController : ControllerBase
         if (moto is null)
             return NotFound();
 
-        return Ok(moto);
-    }
-
-    [HttpPost]
-    [SwaggerOperation(
-            Summary = "Cadastra uma nova moto",
-            Description = "Cadastra uma nova moto no sistema e retorna os dados cadastrados."
-        )]
-    [SwaggerRequestExample(typeof(MotoDTO), typeof(MotoRequestSample))]
-    [SwaggerResponse(statusCode: 200, description: "Loja salva com sucesso", type: typeof(MotoEntity))]
-    [SwaggerResponseExample(statusCode: 200, typeof(MotoResponseSample))]
-    public async Task<IActionResult> Post(MotoDTO dto)
-    {
-        try
+        var response = new
         {
-            var motoCadastrada = await _motoService.AdicionarMotoAsync(dto);
-            return Ok(motoCadastrada);
-        }
-        catch (InvalidOperationException ex)
-        {
-            return BadRequest(new { message = ex.Message });
-        }
-    }
+            moto.Id,
+            moto.Placa,
+            moto.Chassi,
+            moto.Modelo,
+            moto.Status,
+            Servicos = moto.Servicos.Select(s => new ServicoResponseDTO
+            {
+                Id = s.Id,
+                Descricao = s.Descricao,
+                DataCadastro = s.DataCadastro,
+                Status = s.Status,
+                MotoId = s.MotoId,
+                Colaborador = s.Colaborador == null ? null : new ColaboradorResponseDTO
+                {
+                    Id = s.Colaborador.Id,
+                    Nome = s.Colaborador.Nome,
+                    Matricula = s.Colaborador.Matricula,
+                    Email = s.Colaborador.Email
+                }
+            })
+        };
 
-    [HttpPut("{id}")]
-    [SwaggerOperation(
-        Summary = "Atualiza uma moto",
-        Description = "Edita os dados de uma moto já cadastrada com base no ID informado."
-    )]
-    [SwaggerResponse(statusCode: 200, description: "Moto atualizada com sucesso", type: typeof(MotoEntity))]
-    [SwaggerResponse(statusCode: 400, description: "Erro na requisição (validação ou dados inválidos)")]
-    [SwaggerResponse(statusCode: 404, description: "Moto não encontrada")]
-    [SwaggerRequestExample(typeof(MotoDTO), typeof(MotoRequestSample))]
-    [SwaggerResponseExample(statusCode: 200, typeof(MotoResponseSample))]
-    public async Task<IActionResult> Put(int id, MotoDTO dto)
-    {
-        try
-        {
-            var motoEditada = await _motoService.EditarMotoAsync(id, dto);
-            if (motoEditada is null)
-                return NotFound();
-
-            return Ok(motoEditada);
-        }
-        catch (InvalidOperationException ex)
-        {
-            return BadRequest(new { message = ex.Message });
-        }
-    }
-
-    [HttpDelete("{id}")]
-    [SwaggerOperation(
-        Summary = "Remove uma moto",
-        Description = "Exclui permanentemente uma moto com base no ID informado."
-    )]
-    [SwaggerResponse(statusCode: 200, description: "Moto removida com sucesso")]
-    [SwaggerResponse(statusCode: 404, description: "Moto não encontrada")]
-    public async Task<IActionResult> Delete(int id)
-    {
-        var moto = await _motoService.DeletarMotoAsync(id);
-
-        if (moto is null)
-            return NotFound();
-
-        return Ok(moto);
+        return Ok(response);
     }
 }
