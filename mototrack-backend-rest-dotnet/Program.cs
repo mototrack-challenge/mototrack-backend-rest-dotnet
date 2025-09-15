@@ -2,11 +2,11 @@
 using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
-using mototrack_backend_rest_dotnet.Data.AppData;
-using mototrack_backend_rest_dotnet.Data.Repositories;
-using mototrack_backend_rest_dotnet.Data.Repositories.Interface;
-using mototrack_backend_rest_dotnet.Services;
-using mototrack_backend_rest_dotnet.Services.Interface;
+using mototrack_backend_rest_dotnet.Application.Services;
+using mototrack_backend_rest_dotnet.Application.Services.Interface;
+using mototrack_backend_rest_dotnet.Domain.Interfaces;
+using mototrack_backend_rest_dotnet.Infrastructure.Data.AppData;
+using mototrack_backend_rest_dotnet.Infrastructure.Data.Repositories;
 using Swashbuckle.AspNetCore.Filters;
 using System.Threading.RateLimiting;
 

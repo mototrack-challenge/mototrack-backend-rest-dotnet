@@ -1,6 +1,5 @@
-﻿using mototrack_backend_rest_dotnet.Dtos;
-using mototrack_backend_rest_dotnet.Models;
-using mototrack_backend_rest_dotnet.Models.Enums;
+﻿using mototrack_backend_rest_dotnet.Application.Dtos;
+using mototrack_backend_rest_dotnet.Application.Enums;
 using Swashbuckle.AspNetCore.Filters;
 
 namespace mototrack_backend_rest_dotnet.Doc.Samples;
