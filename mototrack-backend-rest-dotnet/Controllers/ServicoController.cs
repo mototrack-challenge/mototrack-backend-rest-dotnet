@@ -48,7 +48,13 @@ public class ServicoController : ControllerBase
                 s.DataCadastro,
                 s.Status,
                 s.MotoId,
-                s.ColaboradorId,
+                Colaborador = s.Colaborador != null ? new
+                {
+                    s.Colaborador.Id,
+                    s.Colaborador.Nome,
+                    s.Colaborador.Matricula,
+                    s.Colaborador.Email
+                } : null,
                 links = new
                 {
                     self = Url.Action(nameof(GetId), "Servico", new { id = s.Id }, Request.Scheme),
@@ -87,7 +93,29 @@ public class ServicoController : ControllerBase
         if (servico is null)
             return NotFound();
 
-        return Ok(servico);
+        var response = new
+        {
+            servico.Id,
+            servico.Descricao,
+            servico.DataCadastro,
+            servico.Status,
+            servico.MotoId,
+            Colaborador = servico.Colaborador != null ? new
+            {
+                servico.Colaborador.Id,
+                servico.Colaborador.Nome,
+                servico.Colaborador.Matricula,
+                servico.Colaborador.Email
+            } : null,
+            links = new
+            {
+                self = Url.Action(nameof(GetId), "Servico", new { id = servico.Id }, Request.Scheme),
+                put = Url.Action(nameof(Put), "Servico", new { id = servico.Id }, Request.Scheme),
+                delete = Url.Action(nameof(Delete), "Servico", new { id = servico.Id }, Request.Scheme)
+            }
+        };
+
+        return Ok(response);
     }
 
     [HttpGet("moto/{motoId}")]
@@ -97,14 +125,28 @@ public class ServicoController : ControllerBase
 )]
     [SwaggerResponse(statusCode: 200, description: "Lista retornada com sucesso", type: typeof(IEnumerable<ServicoEntity>))]
     [SwaggerResponse(statusCode: 404, description: "Moto não encontrada ou sem serviços")]
+    [SwaggerResponseExample(statusCode: 200, typeof(ServicoResponseListSample))]
     public async Task<IActionResult> GetByMotoId(long motoId)
     {
         var servicos = await _servicoService.ObterServicosPorMotoIdAsync(motoId);
 
         if (servicos == null || !servicos.Any())
-            return NotFound(new { message = "Nenhum serviço encontrado para essa moto." });
+            return Ok(new List<ServicoEntity>());
 
-        return Ok(servicos);
+        return Ok(servicos.Select(s => new {
+            s.Id,
+            s.Descricao,
+            s.DataCadastro,
+            s.Status,
+            s.MotoId,
+            Colaborador = s.Colaborador != null ? new
+            {
+                s.Colaborador.Id,
+                s.Colaborador.Nome,
+                s.Colaborador.Matricula,
+                s.Colaborador.Email
+            } : null
+        }));
     }
 
     [HttpPost]

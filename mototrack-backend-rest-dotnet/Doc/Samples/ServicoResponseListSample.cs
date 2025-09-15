@@ -1,32 +1,45 @@
-﻿using mototrack_backend_rest_dotnet.Models;
+﻿using mototrack_backend_rest_dotnet.Dtos;
+using mototrack_backend_rest_dotnet.Models;
 using mototrack_backend_rest_dotnet.Models.Enums;
 using Swashbuckle.AspNetCore.Filters;
 
 namespace mototrack_backend_rest_dotnet.Doc.Samples;
 
-public class ServicoResponseListSample : IExamplesProvider<IEnumerable<ServicoEntity>>
+public class ServicoResponseListSample : IExamplesProvider<IEnumerable<ServicoResponseDTO>>
 {
-    public IEnumerable<ServicoEntity> GetExamples()
+    public IEnumerable<ServicoResponseDTO> GetExamples()
     {
-        return new List<ServicoEntity>
+        return new List<ServicoResponseDTO>
         {
-            new ServicoEntity
+            new ServicoResponseDTO
             {
                 Id = 1,
                 Descricao = "Troca de óleo",
                 DataCadastro = DateTime.Now,
                 Status = StatusServico.EmAndamento,
                 MotoId = 2,
-                ColaboradorId = 1
+                Colaborador = new ColaboradorResponseDTO
+                {
+                    Id = 1,
+                    Nome = "Felipe Sora",
+                    Matricula = "620184901",
+                    Email = "felipe@email.com"
+                }
             },
-            new ServicoEntity
+            new ServicoResponseDTO
             {
                 Id = 2,
                 Descricao = "Revisão do motor",
                 DataCadastro = DateTime.Now,
                 Status = StatusServico.Pendente,
                 MotoId = 3,
-                ColaboradorId = 2
+                Colaborador = new ColaboradorResponseDTO
+                {
+                    Id = 1,
+                    Nome = "Felipe Sora",
+                    Matricula = "620184901",
+                    Email = "felipe@email.com"
+                }
             }
         };
     }
