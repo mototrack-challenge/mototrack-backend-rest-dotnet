@@ -25,6 +25,9 @@ builder.Services.AddTransient<IColaboradorService, ColaboradorService>();
 builder.Services.AddTransient<IServicoRepository, ServicoRepository>();
 builder.Services.AddTransient<IServicoService, ServicoService>();
 
+builder.Services.AddTransient<IPecaRepository, PecaRepository>();
+builder.Services.AddTransient<IPecaService, PecaService>();
+
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
