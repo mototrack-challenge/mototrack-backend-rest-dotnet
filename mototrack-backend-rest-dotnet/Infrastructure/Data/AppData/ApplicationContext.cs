@@ -35,6 +35,6 @@ public class ApplicationContext : DbContext
 
     public DbSet<MotoEntity> Moto { get; set; }
     public DbSet<ColaboradorEntity> Colaborador { get; set; }
-
     public DbSet<ServicoEntity> Servico { get; set; }
+    public DbSet<PecaEntity> Peca { get; set; }
 }
