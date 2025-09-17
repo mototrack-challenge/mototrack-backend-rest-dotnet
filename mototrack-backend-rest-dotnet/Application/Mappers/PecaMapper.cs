@@ -5,7 +5,7 @@ namespace mototrack_backend_rest_dotnet.Application.Mappers;
 
 public static class PecaMapper
 {
-    public static PecaEntity ToColaboradorEntity(this PecaDTO dto)
+    public static PecaEntity ToPecaEntity(this PecaDTO dto)
     {
         return new PecaEntity
         {
