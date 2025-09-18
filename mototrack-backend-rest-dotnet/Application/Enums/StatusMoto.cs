@@ -6,6 +6,6 @@ namespace mototrack_backend_rest_dotnet.Application.Enums;
 public enum StatusMoto
 {
     MANUTENCAO,
-    PRONTA_PARA_USO,
+    DISPONIVEL,
     AVALIACAO
 }
