@@ -3,6 +3,7 @@ using mototrack_backend_rest_dotnet.Application.Mappers;
 using mototrack_backend_rest_dotnet.Application.Services.Interface;
 using mototrack_backend_rest_dotnet.Domain.Entities;
 using mototrack_backend_rest_dotnet.Domain.Interfaces;
+using System.Net;
 
 namespace mototrack_backend_rest_dotnet.Application.Services;
 
@@ -15,39 +16,107 @@ public class ColaboradorService : IColaboradorService
         _colaboradorRepository = colaboradorRepository;
     }
 
-    public async Task<PageResultModel<IEnumerable<ColaboradorEntity>>> ObterTodosColaboradoresAsync(int deslocamento = 0, int registrosRetornados = 10)
+    public async Task<OperationResult<PageResultModel<IEnumerable<ColaboradorEntity>>>> ObterTodosColaboradoresAsync(int deslocamento = 0, int registrosRetornados = 10)
     {
-        var colaboradores = await _colaboradorRepository.ObterTodosColaboradoresAsync(deslocamento, registrosRetornados);
-        return colaboradores;
+        try
+        {
+            var result = await _colaboradorRepository.ObterTodosColaboradoresAsync(deslocamento, registrosRetornados);
+
+            if (!result.Data.Any())
+                return OperationResult<PageResultModel<IEnumerable<ColaboradorEntity>>>.Failure("Não existe conteudo para colaborador", (int)HttpStatusCode.NotFound);
+
+            return OperationResult<PageResultModel<IEnumerable<ColaboradorEntity>>>.Success(result);
+        }
+        catch (Exception)
+        {
+            return OperationResult<PageResultModel<IEnumerable<ColaboradorEntity>>>.Failure("Ocorreu um erro ao buscar os colaboradores");
+        }
     }
 
-    public async Task<ColaboradorEntity?> ObterColaboradorPorIdAsync(long id)
+    public async Task<OperationResult<ColaboradorEntity?>> ObterColaboradorPorIdAsync(long id)
     {
-        return await _colaboradorRepository.ObterColaboradorPorIdAsync(id);
+        try
+        {
+            var result = await _colaboradorRepository.ObterColaboradorPorIdAsync(id);
+
+            if (result is null)
+                return OperationResult<ColaboradorEntity?>.Failure("Colaborador não encontrado", (int)HttpStatusCode.NotFound);
+
+            return OperationResult<ColaboradorEntity?>.Success(result);
+        }
+        catch (Exception)
+        {
+            return OperationResult<ColaboradorEntity?>.Failure("Ocorreu um erro ao buscar o colaborador");
+        }
     }
 
-    public async Task<ColaboradorEntity?> AdicionarColaboradorAsync(ColaboradorDTO colaboradorDTO)
+    public async Task<OperationResult<ColaboradorEntity?>> AdicionarColaboradorAsync(ColaboradorDTO colaboradorDTO)
     {
-        return await _colaboradorRepository.AdicionarColaboradorAsync(colaboradorDTO.ToColaboradorEntity());
+        try
+        {
+            var existe = await _colaboradorRepository.ObterTodosColaboradoresAsync();
+            var jaExiste = existe.Data.Any(c =>
+                c.Email == colaboradorDTO.Email || c.Matricula == colaboradorDTO.Matricula);
+
+            if (jaExiste)
+                return OperationResult<ColaboradorEntity?>.Failure(
+                    "Já existe um colaborador com este e-mail ou matrícula",
+                    (int)HttpStatusCode.Conflict
+                );
+
+            var result = await _colaboradorRepository.AdicionarColaboradorAsync(colaboradorDTO.ToColaboradorEntity());
+            return OperationResult<ColaboradorEntity?>.Success(result);
+        }
+        catch (Exception ex)
+        {
+            return OperationResult<ColaboradorEntity?>.Failure("Ocorreu um erro ao salvar o colaborador: " + ex.Message);
+        }
     }
 
-    public async Task<ColaboradorEntity?> EditarColaboradorAsync(long id, ColaboradorDTO novoColaboradorDTO)
+    public async Task<OperationResult<ColaboradorEntity?>> EditarColaboradorAsync(long id, ColaboradorDTO novoColaboradorDTO)
     {
-        var colaboradorExistente = await _colaboradorRepository.ObterColaboradorPorIdAsync(id);
+        try
+        {
+            var existente = await _colaboradorRepository.ObterColaboradorPorIdAsync(id);
 
-        if (colaboradorExistente is null)
-            return null;
+            if (existente is null)
+                return OperationResult<ColaboradorEntity?>.Failure("Colaborador não encontrado", (int)HttpStatusCode.NotFound);
 
-        return await _colaboradorRepository.EditarColaboradorAsync(id, novoColaboradorDTO.ToColaboradorEntity());
+            if (await _colaboradorRepository.ExisteOutroComMesmoEmailAsync(id, novoColaboradorDTO.Email))
+                return OperationResult<ColaboradorEntity?>.Failure("Já existe outro colaborador com este e-mail", (int)HttpStatusCode.Conflict);
+
+            if (await _colaboradorRepository.ExisteOutroComMesmoMatriculaAsync(id, novoColaboradorDTO.Matricula))
+                return OperationResult<ColaboradorEntity?>.Failure("Já existe outro colaborador com esta matrícula", (int)HttpStatusCode.Conflict);
+
+            var entidade = novoColaboradorDTO.ToColaboradorEntity();
+            entidade.Id = id;
+
+            var atualizado = await _colaboradorRepository.EditarColaboradorAsync(id, entidade);
+
+            return OperationResult<ColaboradorEntity?>.Success(atualizado);
+        }
+        catch (Exception ex)
+        {
+            return OperationResult<ColaboradorEntity?>.Failure("Ocorreu um erro ao editar o colaborador: " + ex.Message);
+        }
     }
 
-    public async Task<ColaboradorEntity?> DeletarColaboradorAsync(long id)
+    public async Task<OperationResult<ColaboradorEntity?>> DeletarColaboradorAsync(long id)
     {
-        var colaborador = await _colaboradorRepository.ObterColaboradorPorIdAsync(id);
+        try
+        {
+            var existente = await _colaboradorRepository.ObterColaboradorPorIdAsync(id);
 
-        if (colaborador == null)
-            return null;
+            if (existente is null)
+                return OperationResult<ColaboradorEntity?>.Failure("Colaborador não encontrado", (int)HttpStatusCode.NotFound);
 
-        return await _colaboradorRepository.DeletarColaboradorAsync(id);
+            await _colaboradorRepository.DeletarColaboradorAsync(id);
+
+            return OperationResult<ColaboradorEntity?>.Success(null);
+        }
+        catch (Exception)
+        {
+            return OperationResult<ColaboradorEntity?>.Failure("Ocorreu um erro ao deletar o colaborador");
+        }
     }
 }

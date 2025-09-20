@@ -3,6 +3,8 @@ using mototrack_backend_rest_dotnet.Application.Mappers;
 using mototrack_backend_rest_dotnet.Application.Services.Interface;
 using mototrack_backend_rest_dotnet.Domain.Entities;
 using mototrack_backend_rest_dotnet.Domain.Interfaces;
+using mototrack_backend_rest_dotnet.Infrastructure.Data.Repositories;
+using System.Net;
 
 namespace mototrack_backend_rest_dotnet.Application.Services;
 
@@ -17,49 +19,112 @@ public class ServicoService : IServicoService
         _motoRepository = motoRepository;
     }
 
-    public async Task<PageResultModel<IEnumerable<ServicoEntity>>> ObterTodosServicosAsync(int deslocamento = 0, int registrosRetornados = 10)
+    public async Task<OperationResult<PageResultModel<IEnumerable<ServicoEntity>>>> ObterTodosServicosAsync(int deslocamento = 0, int registrosRetornados = 10)
     {
-        var servicos = await _servicoRepository.ObterTodosServicosAsync(deslocamento, registrosRetornados);
-        return servicos;
+        try
+        {
+            var result = await _servicoRepository.ObterTodosServicosAsync(deslocamento, registrosRetornados);
+
+            if (!result.Data.Any())
+                return OperationResult<PageResultModel<IEnumerable<ServicoEntity>>>.Failure("Não existe conteudo para serviços",(int)HttpStatusCode.NotFound);
+
+            return OperationResult<PageResultModel<IEnumerable<ServicoEntity>>>.Success(result);
+        }
+        catch (Exception)
+        {
+            return OperationResult<PageResultModel<IEnumerable<ServicoEntity>>>.Failure("Ocorreu um erro ao buscar os serviços");
+        }
     }
 
-    public async Task<ServicoEntity?> ObterServicoPorIdAsync(long id)
+    public async Task<OperationResult<ServicoEntity?>> ObterServicoPorIdAsync(long id)
     {
-        return await _servicoRepository.ObterServicoPorIdAsync(id);
+        try
+        {
+            var result = await _servicoRepository.ObterServicoPorIdAsync(id);
+
+            if (result is null)
+                return OperationResult<ServicoEntity?>.Failure("Serviço não encontrado", (int)HttpStatusCode.NotFound);
+
+            return OperationResult<ServicoEntity?>.Success(result);
+        }
+        catch (Exception)
+        {
+            return OperationResult<ServicoEntity?>.Failure("Ocorreu um erro ao buscar o serviço");
+        }
     }
 
-    public async Task<IEnumerable<ServicoEntity>> ObterServicosPorMotoIdAsync(long motoId)
+    public async Task<OperationResult<IEnumerable<ServicoEntity>>> ObterServicosPorMotoIdAsync(long motoId)
     {
-        var moto = await _motoRepository.ObterMotoPorIdAsync(motoId);
+        try
+        {
+            var moto = await _motoRepository.ObterMotoPorIdAsync(motoId);
 
-        if (moto is null)
-            return null;
+            if (moto is null)
+                return OperationResult<IEnumerable<ServicoEntity>>.Failure("Moto não encontrada", (int)HttpStatusCode.NotFound);
 
-        return await _servicoRepository.ObterServicosPorMotoIdAsync(motoId);
+            var servicos = await _servicoRepository.ObterServicosPorMotoIdAsync(motoId);
+
+            if (servicos == null || !servicos.Any())
+                return OperationResult<IEnumerable<ServicoEntity>>.Failure("Não existem serviços para esta moto", (int)HttpStatusCode.NoContent);
+
+            return OperationResult<IEnumerable<ServicoEntity>>.Success(servicos);
+        }
+        catch (Exception)
+        {
+            return OperationResult<IEnumerable<ServicoEntity>>.Failure("Ocorreu um erro ao buscar os serviços da moto");
+        }
     }
 
-    public async Task<ServicoEntity?> AdicionarServicoAsync(ServicoDTO servicoDTO)
+    public async Task<OperationResult<ServicoEntity?>> AdicionarServicoAsync(ServicoDTO servicoDTO)
     {
-        return await _servicoRepository.AdicionarServicoAsync(servicoDTO.ToServicoEntity());
+        try
+        {
+            var result = await _servicoRepository.AdicionarServicoAsync(servicoDTO.ToServicoEntity());
+
+            return OperationResult<ServicoEntity?>.Success(result);
+        }
+        catch (Exception)
+        {
+            return OperationResult<ServicoEntity?>.Failure("Ocorreu um erro ao salvar o serviço");
+        }
     }
 
-    public async Task<ServicoEntity?> EditarServicoAsync(long id, ServicoDTO novoServicoDTO)
+    public async Task<OperationResult<ServicoEntity?>> EditarServicoAsync(long id, ServicoDTO novoServicoDTO)
     {
-        var servicoExistente = await _servicoRepository.ObterServicoPorIdAsync(id);
+        try
+        {
+            var existente = await _servicoRepository.ObterServicoPorIdAsync(id);
 
-        if (servicoExistente is null)
-            return null;
+            if (existente is null) return OperationResult<ServicoEntity?>.Failure("Serviço não encontrado", (int)HttpStatusCode.NotFound);
 
-        return await _servicoRepository.EditarServicoAsync(id, novoServicoDTO.ToServicoEntity());
+            var entidade = novoServicoDTO.ToServicoEntity();
+            entidade.Id = id;
+            var atualizado = await _servicoRepository.EditarServicoAsync(id, entidade);
+
+            return OperationResult<ServicoEntity?>.Success(atualizado);
+        }
+        catch (Exception ex)
+        {
+            return OperationResult<ServicoEntity?>.Failure("Ocorreu um erro ao editar o serviço");
+        }
     }
 
-    public async Task<ServicoEntity?> DeletarServicoAsync(long id)
+    public async Task<OperationResult<ServicoEntity?>> DeletarServicoAsync(long id)
     {
-        var servico = await _servicoRepository.ObterServicoPorIdAsync(id);
+        try
+        {
+            var existente = await _servicoRepository.ObterServicoPorIdAsync(id);
 
-        if (servico == null)
-            return null;
+            if (existente is null)
+                return OperationResult<ServicoEntity?>.Failure("Serviço não encontrado", (int)HttpStatusCode.NotFound);
 
-        return await _servicoRepository.DeletarServicoAsync(id);
+            await _servicoRepository.DeletarServicoAsync(id);
+
+            return OperationResult<ServicoEntity?>.Success(null);
+        }
+        catch (Exception)
+        {
+            return OperationResult<ServicoEntity?>.Failure("Ocorreu um erro ao deletar o serviço");
+        }
     }
 }

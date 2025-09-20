@@ -9,4 +9,6 @@ public interface IColaboradorRepository
     Task<ColaboradorEntity?> AdicionarColaboradorAsync(ColaboradorEntity colaborador);
     Task<ColaboradorEntity?> EditarColaboradorAsync(long id, ColaboradorEntity novoColaborador);
     Task<ColaboradorEntity?> DeletarColaboradorAsync(long id);
+    Task<bool> ExisteOutroComMesmoEmailAsync(long id, string email);
+    Task<bool> ExisteOutroComMesmoMatriculaAsync(long id, string matricula);
 }

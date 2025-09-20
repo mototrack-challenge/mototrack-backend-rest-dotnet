@@ -33,12 +33,11 @@ public class MotoController : ControllerBase
     {
         var result = await _motoService.ObterTodasMotosAsync(deslocamento, registrosRetornados);
 
-        if (!result.Data.Any())
-            return NoContent();
+        if (!result.IsSuccess) return StatusCode(result.StatusCode, result.Error);
 
         var hateaos = new
         {
-            data = result.Data.Select(m => new {
+            data = result.Value.Data.Select(m => new {
                 m.Id,
                 m.Placa,
                 m.Chassi,
@@ -70,9 +69,9 @@ public class MotoController : ControllerBase
             },
             pagina = new
             {
-                result.Deslocamento,
-                result.RegistrosRetornados,
-                result.TotalRegistros
+                result.Value.Deslocamento,
+                result.Value.RegistrosRetornados,
+                result.Value.TotalRegistros
             }
         };
 
@@ -91,17 +90,16 @@ public class MotoController : ControllerBase
     {
         var moto = await _motoService.ObterMotoPorIdAsync(id);
 
-        if (moto is null)
-            return NotFound();
+        if (!moto.IsSuccess) return StatusCode(moto.StatusCode, moto.Error);
 
         var response = new
         {
-            moto.Id,
-            moto.Placa,
-            moto.Chassi,
-            moto.Modelo,
-            moto.Status,
-            Servicos = moto.Servicos.Select(s => new ServicoResponseDTO
+            moto.Value.Id,
+            moto.Value.Placa,
+            moto.Value.Chassi,
+            moto.Value.Modelo,
+            moto.Value.Status,
+            Servicos = moto.Value.Servicos.Select(s => new ServicoResponseDTO
             {
                 Id = s.Id,
                 Descricao = s.Descricao,

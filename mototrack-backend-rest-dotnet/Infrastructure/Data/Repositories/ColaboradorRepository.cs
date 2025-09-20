@@ -79,4 +79,22 @@ public class ColaboradorRepository : IColaboradorRepository
         await _context.SaveChangesAsync();
         return colaborador;
     }
+
+    public async Task<bool> ExisteOutroComMesmoEmailAsync(long id, string email)
+    {
+        var existe = await _context.Colaborador
+            .Where(c => c.Email == email && c.Id != id)
+            .FirstOrDefaultAsync();
+
+        return existe != null;
+    }
+
+    public async Task<bool> ExisteOutroComMesmoMatriculaAsync(long id, string matricula)
+    {
+        var existe = await _context.Colaborador
+            .Where(c => c.Matricula == matricula && c.Id != id)
+            .FirstOrDefaultAsync();
+
+        return existe != null;
+    }
 }

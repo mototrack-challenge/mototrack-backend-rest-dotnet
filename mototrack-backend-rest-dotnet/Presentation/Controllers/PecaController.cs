@@ -1,7 +1,9 @@
 ﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
 using mototrack_backend_rest_dotnet.Application.Dtos;
+using mototrack_backend_rest_dotnet.Application.Services;
 using mototrack_backend_rest_dotnet.Application.Services.Interface;
 using mototrack_backend_rest_dotnet.Doc.Samples;
 using mototrack_backend_rest_dotnet.Domain.Entities;
@@ -34,12 +36,11 @@ public class PecaController : ControllerBase
     {
         var result = await _pecaService.ObterTodasPecasAsync(deslocamento, registrosRetornados);
 
-        if (!result.Data.Any())
-            return NoContent();
+        if (!result.IsSuccess) return StatusCode(result.StatusCode, result.Error);
 
         var hateaos = new
         {
-            data = result.Data.Select(c => new {
+            data = result.Value.Data.Select(c => new {
                 c.Id,
                 c.Nome,
                 c.Codigo,
@@ -59,9 +60,9 @@ public class PecaController : ControllerBase
             },
             pagina = new
             {
-                result.Deslocamento,
-                result.RegistrosRetornados,
-                result.TotalRegistros
+                result.Value.Deslocamento,
+                result.Value.RegistrosRetornados,
+                result.Value.TotalRegistros
             }
         };
 
@@ -78,12 +79,11 @@ public class PecaController : ControllerBase
     [SwaggerResponseExample(statusCode: 200, typeof(PecaResponseSample))]
     public async Task<IActionResult> GetId(long id)
     {
-        var peca = await _pecaService.ObterPecaPorIdAsync(id);
+        var result = await _pecaService.ObterPecaPorIdAsync(id);
 
-        if (peca is null)
-            return NotFound();
+        if (!result.IsSuccess) return StatusCode(result.StatusCode, result.Error);
 
-        return Ok(peca);
+        return StatusCode(result.StatusCode, result);
     }
 
     [HttpPost]
@@ -96,15 +96,11 @@ public class PecaController : ControllerBase
     [SwaggerResponseExample(statusCode: 200, typeof(PecaResponseSample))]
     public async Task<IActionResult> Post(PecaDTO dto)
     {
-        try
-        {
-            var pecaCadastrada = await _pecaService.AdicionarPecaAsync(dto);
-            return Ok(pecaCadastrada);
-        }
-        catch (Exception ex)
-        {
-            return BadRequest(new { message = ex.Message });
-        }
+        var result = await _pecaService.AdicionarPecaAsync(dto);
+
+        if (!result.IsSuccess) return StatusCode(result.StatusCode, result.Error);
+
+        return StatusCode(result.StatusCode, result);
     }
 
     [HttpPut("{id}")]
@@ -119,18 +115,11 @@ public class PecaController : ControllerBase
     [SwaggerResponseExample(statusCode: 200, typeof(PecaResponseSample))]
     public async Task<IActionResult> Put(long id, PecaDTO dto)
     {
-        try
-        {
-            var pecaEditada = await _pecaService.EditarPecaAsync(id, dto);
-            if (pecaEditada is null)
-                return NotFound();
+        var result = await _pecaService.EditarPecaAsync(id, dto);
 
-            return Ok(pecaEditada);
-        }
-        catch (Exception ex)
-        {
-            return BadRequest(new { message = ex.Message });
-        }
+        if (!result.IsSuccess) return StatusCode(result.StatusCode, result.Error);
+
+        return StatusCode(result.StatusCode, result);
     }
 
     [HttpDelete("{id}")]
@@ -142,11 +131,10 @@ public class PecaController : ControllerBase
     [SwaggerResponse(statusCode: 404, description: "Peça não encontrada")]
     public async Task<IActionResult> Delete(long id)
     {
-        var peca = await _pecaService.DeletarPecaAsync(id);
+        var result = await _pecaService.DeletarPecaAsync(id);
 
-        if (peca is null)
-            return NotFound();
+        if (!result.IsSuccess) return StatusCode(result.StatusCode, result.Error);
 
-        return Ok(peca);
+        return StatusCode(result.StatusCode, result);
     }
 }

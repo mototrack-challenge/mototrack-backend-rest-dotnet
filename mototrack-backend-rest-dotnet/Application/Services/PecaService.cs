@@ -3,6 +3,8 @@ using mototrack_backend_rest_dotnet.Application.Mappers;
 using mototrack_backend_rest_dotnet.Application.Services.Interface;
 using mototrack_backend_rest_dotnet.Domain.Entities;
 using mototrack_backend_rest_dotnet.Domain.Interfaces;
+using mototrack_backend_rest_dotnet.Infrastructure.Data.Repositories;
+using System.Net;
 
 namespace mototrack_backend_rest_dotnet.Application.Services;
 
@@ -15,39 +17,90 @@ public class PecaService : IPecaService
         _pecaRepository = pecaRepository;
     }
 
-    public async Task<PageResultModel<IEnumerable<PecaEntity>>> ObterTodasPecasAsync(int deslocamento = 0, int registrosRetornados = 10)
+    public async Task<OperationResult<PageResultModel<IEnumerable<PecaEntity>>>> ObterTodasPecasAsync(int deslocamento = 0, int registrosRetornados = 10)
     {
-        var pecas = await _pecaRepository.ObterTodasPecasAsync(deslocamento, registrosRetornados);
-        return pecas;
+        try
+        {
+            var result = await _pecaRepository.ObterTodasPecasAsync(deslocamento, registrosRetornados);
+
+            if (!result.Data.Any())
+                return OperationResult<PageResultModel<IEnumerable<PecaEntity>>>.Failure("Não existe conteudo para peças", (int)HttpStatusCode.NotFound);
+
+            return OperationResult<PageResultModel<IEnumerable<PecaEntity>>>.Success(result);
+        }
+        catch (Exception)
+        {
+            return OperationResult<PageResultModel<IEnumerable<PecaEntity>>>.Failure("Ocorreu um erro ao buscar as peças");
+        }
     }
 
-    public async Task<PecaEntity?> ObterPecaPorIdAsync(long id)
+    public async Task<OperationResult<PecaEntity?>> ObterPecaPorIdAsync(long id)
     {
-        return await _pecaRepository.ObterPecaPorIdAsync(id);
+        try
+        {
+            var result = await _pecaRepository.ObterPecaPorIdAsync(id);
+
+            if (result is null)
+                return OperationResult<PecaEntity?>.Failure("Peça não encontrada", (int)HttpStatusCode.NotFound);
+
+            return OperationResult<PecaEntity?>.Success(result);
+        }
+        catch (Exception)
+        {
+            return OperationResult<PecaEntity?>.Failure("Ocorreu um erro ao buscar a peça");
+        }
     }
 
-    public async Task<PecaEntity?> AdicionarPecaAsync(PecaDTO pecaDTO)
+    public async Task<OperationResult<PecaEntity?>> AdicionarPecaAsync(PecaDTO pecaDTO)
     {
-        return await _pecaRepository.AdicionarPecaAsync(pecaDTO.ToPecaEntity());
+        try
+        {
+            var result = await _pecaRepository.AdicionarPecaAsync(pecaDTO.ToPecaEntity());
+
+            return OperationResult<PecaEntity?>.Success(result);
+        }
+        catch (Exception)
+        {
+            return OperationResult<PecaEntity?>.Failure("Ocorreu um erro ao salvar a peça");
+        }
     }
 
-    public async Task<PecaEntity?> EditarPecaAsync(long id, PecaDTO novaPecaDTO)
+    public async Task<OperationResult<PecaEntity?>> EditarPecaAsync(long id, PecaDTO novaPecaDTO)
     {
-        var pecaExistente = await _pecaRepository.ObterPecaPorIdAsync(id);
+        try
+        {
+            var existente = await _pecaRepository.ObterPecaPorIdAsync(id);
 
-        if (pecaExistente is null)
-            return null;
+            if (existente is null) return OperationResult<PecaEntity?>.Failure("Peça não encontrada", (int)HttpStatusCode.NotFound);
 
-        return await _pecaRepository.EditarPecaAsync(id, novaPecaDTO.ToPecaEntity());
+            var entidade = novaPecaDTO.ToPecaEntity(); 
+            entidade.Id = id;
+            var atualizado = await _pecaRepository.EditarPecaAsync(id, entidade);
+
+            return OperationResult<PecaEntity?>.Success(atualizado);
+        }
+        catch (Exception ex)
+        {
+            return OperationResult<PecaEntity?>.Failure("Ocorreu um erro ao editar a peça");
+        }
     }
 
-    public async Task<PecaEntity?> DeletarPecaAsync(long id)
+    public async Task<OperationResult<PecaEntity?>> DeletarPecaAsync(long id)
     {
-        var peca = await _pecaRepository.ObterPecaPorIdAsync(id);
+        try
+        {
+            var existente = await _pecaRepository.ObterPecaPorIdAsync(id);
 
-        if (peca == null)
-            return null;
+            if (existente is null)
+                return OperationResult<PecaEntity?>.Failure("Peça não encontrada", (int)HttpStatusCode.NotFound);
 
-        return await _pecaRepository.DeletarPecaAsync(id);
+            await _pecaRepository.DeletarPecaAsync(id);
+
+            return OperationResult<PecaEntity?>.Success(null);
+        }
+        catch (Exception)
+        {
+            return OperationResult<PecaEntity?>.Failure("Ocorreu um erro ao deletar a peça");
+        }
     }
 }

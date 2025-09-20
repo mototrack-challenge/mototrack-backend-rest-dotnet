@@ -34,12 +34,11 @@ public class ColaboradorController : ControllerBase
     {
         var result = await _colaboradorService.ObterTodosColaboradoresAsync(deslocamento, registrosRetornados);
 
-        if (!result.Data.Any())
-            return NoContent();
+        if (!result.IsSuccess) return StatusCode(result.StatusCode, result.Error);
 
         var hateaos = new
         {
-            data = result.Data.Select(c => new {
+            data = result.Value.Data.Select(c => new {
                 c.Id,
                 c.Nome,
                 c.Matricula,
@@ -59,13 +58,13 @@ public class ColaboradorController : ControllerBase
             },
             pagina = new
             {
-                result.Deslocamento,
-                result.RegistrosRetornados,
-                result.TotalRegistros
+                result.Value.Deslocamento,
+                result.Value.RegistrosRetornados,
+                result.Value.TotalRegistros
             }
         };
 
-        return Ok(hateaos);
+        return StatusCode(result.StatusCode, hateaos);
     }
 
     [HttpGet("{id}")]
@@ -78,12 +77,11 @@ public class ColaboradorController : ControllerBase
     [SwaggerResponseExample(statusCode: 200, typeof(ColaboradorResponseSample))]
     public async Task<IActionResult> GetId(long id)
     {
-        var colaborador = await _colaboradorService.ObterColaboradorPorIdAsync(id);
+        var result = await _colaboradorService.ObterColaboradorPorIdAsync(id);
 
-        if (colaborador is null)
-            return NotFound();
+        if (!result.IsSuccess) return StatusCode(result.StatusCode, result.Error);
 
-        return Ok(colaborador);
+        return StatusCode(result.StatusCode, result);
     }
 
     [HttpPost]
@@ -96,15 +94,11 @@ public class ColaboradorController : ControllerBase
     [SwaggerResponseExample(statusCode: 200, typeof(ColaboradorResponseSample))]
     public async Task<IActionResult> Post(ColaboradorDTO dto)
     {
-        try
-        {
-            var colaboradorCadastrado = await _colaboradorService.AdicionarColaboradorAsync(dto);
-            return Ok(colaboradorCadastrado);
-        }
-        catch (Exception ex)
-        {
-            return BadRequest(new { message = ex.Message });
-        }
+        var result = await _colaboradorService.AdicionarColaboradorAsync(dto);
+
+        if (!result.IsSuccess) return StatusCode(result.StatusCode, result.Error);
+
+        return StatusCode(result.StatusCode, result);
     }
 
     [HttpPut("{id}")]
@@ -119,18 +113,11 @@ public class ColaboradorController : ControllerBase
     [SwaggerResponseExample(statusCode: 200, typeof(ColaboradorResponseSample))]
     public async Task<IActionResult> Put(long id, ColaboradorDTO dto)
     {
-        try
-        {
-            var colaboradorEditado = await _colaboradorService.EditarColaboradorAsync(id, dto);
-            if (colaboradorEditado is null)
-                return NotFound();
+        var result = await _colaboradorService.EditarColaboradorAsync(id, dto);
 
-            return Ok(colaboradorEditado);
-        }
-        catch (Exception ex)
-        {
-            return BadRequest(new { message = ex.Message });
-        }
+        if (!result.IsSuccess) return StatusCode(result.StatusCode, result.Error);
+
+        return StatusCode(result.StatusCode, result);
     }
 
     [HttpDelete("{id}")]
@@ -142,11 +129,10 @@ public class ColaboradorController : ControllerBase
     [SwaggerResponse(statusCode: 404, description: "Colaborador não encontrado")]
     public async Task<IActionResult> Delete(long id)
     {
-        var colaborador = await _colaboradorService.DeletarColaboradorAsync(id);
+        var result = await _colaboradorService.DeletarColaboradorAsync(id);
 
-        if (colaborador is null)
-            return NotFound();
+        if (!result.IsSuccess) return StatusCode(result.StatusCode, result.Error);
 
-        return Ok(colaborador);
+        return StatusCode(result.StatusCode, result);
     }
 }

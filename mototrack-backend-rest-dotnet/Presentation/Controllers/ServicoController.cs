@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
 using mototrack_backend_rest_dotnet.Application.Dtos;
+using mototrack_backend_rest_dotnet.Application.Services;
 using mototrack_backend_rest_dotnet.Application.Services.Interface;
 using mototrack_backend_rest_dotnet.Doc.Samples;
 using mototrack_backend_rest_dotnet.Domain.Entities;
@@ -34,12 +35,12 @@ public class ServicoController : ControllerBase
     public async Task<IActionResult> Get(int deslocamento = 0, int registrosRetornados = 10)
     {
         var result = await _servicoService.ObterTodosServicosAsync(deslocamento, registrosRetornados);
-        if (!result.Data.Any())
-            return NoContent();
+
+        if (!result.IsSuccess) return StatusCode(result.StatusCode, result.Error);
 
         var hateaos = new
         {
-            data = result.Data.Select(s => new {
+            data = result.Value.Data.Select(s => new {
                 s.Id,
                 s.Descricao,
                 s.DataCadastro,
@@ -66,9 +67,9 @@ public class ServicoController : ControllerBase
             },
             pagina = new
             {
-                result.Deslocamento,
-                result.RegistrosRetornados,
-                result.TotalRegistros
+                result.Value.Deslocamento,
+                result.Value.RegistrosRetornados,
+                result.Value.TotalRegistros
             }
         };
 
@@ -87,28 +88,27 @@ public class ServicoController : ControllerBase
     {
         var servico = await _servicoService.ObterServicoPorIdAsync(id);
 
-        if (servico is null)
-            return NotFound();
+        if (!servico.IsSuccess) return StatusCode(servico.StatusCode, servico.Error);
 
         var response = new
         {
-            servico.Id,
-            servico.Descricao,
-            servico.DataCadastro,
-            servico.Status,
-            servico.MotoId,
-            Colaborador = servico.Colaborador != null ? new
+            servico.Value.Id,
+            servico.Value.Descricao,
+            servico.Value.DataCadastro,
+            servico.Value.Status,
+            servico.Value.MotoId,
+            Colaborador = servico.Value.Colaborador != null ? new
             {
-                servico.Colaborador.Id,
-                servico.Colaborador.Nome,
-                servico.Colaborador.Matricula,
-                servico.Colaborador.Email
+                servico.Value.Colaborador.Id,
+                servico.Value.Colaborador.Nome,
+                servico.Value.Colaborador.Matricula,
+                servico.Value.Colaborador.Email
             } : null,
             links = new
             {
-                self = Url.Action(nameof(GetId), "Servico", new { id = servico.Id }, Request.Scheme),
-                put = Url.Action(nameof(Put), "Servico", new { id = servico.Id }, Request.Scheme),
-                delete = Url.Action(nameof(Delete), "Servico", new { id = servico.Id }, Request.Scheme)
+                self = Url.Action(nameof(GetId), "Servico", new { id = servico.Value.Id }, Request.Scheme),
+                put = Url.Action(nameof(Put), "Servico", new { id = servico.Value.Id }, Request.Scheme),
+                delete = Url.Action(nameof(Delete), "Servico", new { id = servico.Value.Id }, Request.Scheme)
             }
         };
 
@@ -127,10 +127,9 @@ public class ServicoController : ControllerBase
     {
         var servicos = await _servicoService.ObterServicosPorMotoIdAsync(motoId);
 
-        if (servicos == null || !servicos.Any())
-            return Ok(new List<ServicoEntity>());
+        if (!servicos.IsSuccess) return StatusCode(servicos.StatusCode, servicos.Error);
 
-        return Ok(servicos.Select(s => new {
+        return Ok(servicos.Value.Select(s => new {
             s.Id,
             s.Descricao,
             s.DataCadastro,
@@ -156,15 +155,11 @@ public class ServicoController : ControllerBase
     [SwaggerResponseExample(statusCode: 200, typeof(ServicoResponseSample))]
     public async Task<IActionResult> Post(ServicoDTO dto)
     {
-        try
-        {
-            var servicoCadastrado = await _servicoService.AdicionarServicoAsync(dto);
-            return Ok(servicoCadastrado);
-        }
-        catch (Exception ex)
-        {
-            return BadRequest(new { message = ex.Message });
-        }
+        var result = await _servicoService.AdicionarServicoAsync(dto);
+
+        if (!result.IsSuccess) return StatusCode(result.StatusCode, result.Error);
+
+        return StatusCode(result.StatusCode, result);
     }
 
     [HttpPut("{id}")]
@@ -179,18 +174,11 @@ public class ServicoController : ControllerBase
     [SwaggerResponseExample(statusCode: 200, typeof(ServicoResponseSample))]
     public async Task<IActionResult> Put(long id, ServicoDTO dto)
     {
-        try
-        {
-            var servicoEditado = await _servicoService.EditarServicoAsync(id, dto);
-            if (servicoEditado is null)
-                return NotFound();
+        var result = await _servicoService.EditarServicoAsync(id, dto);
 
-            return Ok(servicoEditado);
-        }
-        catch (Exception ex)
-        {
-            return BadRequest(new { message = ex.Message });
-        }
+        if (!result.IsSuccess) return StatusCode(result.StatusCode, result.Error);
+
+        return StatusCode(result.StatusCode, result);
     }
 
     [HttpDelete("{id}")]
@@ -202,11 +190,10 @@ public class ServicoController : ControllerBase
     [SwaggerResponse(statusCode: 404, description: "Serviço não encontrado")]
     public async Task<IActionResult> Delete(long id)
     {
-        var servico = await _servicoService.DeletarServicoAsync(id);
+        var result = await _servicoService.DeletarServicoAsync(id);
 
-        if (servico is null)
-            return NotFound();
+        if (!result.IsSuccess) return StatusCode(result.StatusCode, result.Error);
 
-        return Ok(servico);
+        return StatusCode(result.StatusCode, result);
     }
 }
