@@ -83,7 +83,8 @@ public class PecaController : ControllerBase
 
         if (!result.IsSuccess) return StatusCode(result.StatusCode, result.Error);
 
-        return StatusCode(result.StatusCode, result);
+        //return StatusCode(result.StatusCode, result);
+        return Ok(result.Value);
     }
 
     [HttpPost]
