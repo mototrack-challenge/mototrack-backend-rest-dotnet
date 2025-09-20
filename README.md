@@ -266,7 +266,7 @@ Update-Database
 
 Para ver o **MotoTrack REST API .NET** em funcionamento, assista ao vídeo abaixo, onde o projeto é executado e suas principais funcionalidades são demonstradas:  
 
-🎥 [Assista à demonstração completa](https://www.youtube.com/watch?v=h_PNwJsyep4)  
+🎥 [Assista à demonstração completa](https://youtu.be/g3j63Uh33J8)  
 
 No vídeo, você verá:  
 - Consulta das **motos** cadastradas no backend Java (somente leitura)  
