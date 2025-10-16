@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using MT.Domain.Enums;
 
 namespace MT.Domain.Entities;
 
