@@ -2,7 +2,7 @@
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json.Serialization;
 
-namespace mototrack_backend_rest_dotnet.Domain.Entities;
+namespace MT.Domain.Entities;
 
 [Table("MT_SERVICOS")]
 public class ServicoEntity

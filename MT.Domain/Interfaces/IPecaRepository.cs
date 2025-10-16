@@ -1,6 +1,6 @@
-﻿using mototrack_backend_rest_dotnet.Domain.Entities;
+﻿using MT.Domain.Entities;
 
-namespace mototrack_backend_rest_dotnet.Domain.Interfaces;
+namespace MT.Domain.Interfaces;
 
 public interface IPecaRepository
 {

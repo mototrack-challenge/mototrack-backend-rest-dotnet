@@ -1,4 +1,4 @@
-﻿namespace mototrack_backend_rest_dotnet.Domain.Entities;
+﻿namespace MT.Domain.Entities;
 
 public class OperationResult<T>
 {

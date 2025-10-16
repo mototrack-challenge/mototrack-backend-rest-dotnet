@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace mototrack_backend_rest_dotnet.Domain.Entities;
+namespace MT.Domain.Entities;
 
 [Table("MT_PECAS")]
 public class PecaEntity
