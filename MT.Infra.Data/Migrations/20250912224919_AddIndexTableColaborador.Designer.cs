@@ -5,11 +5,11 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Oracle.EntityFrameworkCore.Metadata;
-using mototrack_backend_rest_dotnet.Infrastructure.Data.AppData;
+using MT.Infra.Data.AppData;
 
 #nullable disable
 
-namespace mototrack_backend_rest_dotnet.Migrations
+namespace MT.Infra.Data.Migrations
 {
     [DbContext(typeof(ApplicationContext))]
     [Migration("20250912224919_AddIndexTableColaborador")]
